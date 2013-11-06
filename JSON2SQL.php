@@ -119,10 +119,12 @@ class JSON2SQL{
 		// for Object
 		if(is_object($columns))
 		{	
+			$tableColumns = array();
 
-			$key = key((array)$columns);
-			$val = current((array)$columns);
-			$cmd = sprintf($sql, $_tableName,  $key . " " . $val);
+			foreach ((array)$columns as $key => $val) {
+				array_push($tableColumns, $key . " " . $val );
+			}
+
 		}
 		// for Array
 		else if(is_array($columns))
@@ -134,9 +136,10 @@ class JSON2SQL{
 				array_push($tableColumns, $key . " " . $val);
 			}
 
-			$cmd = sprintf($sql, $_tableName, implode(",", $tableColumns));
+			
 		}
 
+		$cmd = sprintf($sql, $_tableName, implode(",", $tableColumns));
 		// Execute sql command
 		$this->dbHandler->exec($cmd);
 
@@ -145,6 +148,32 @@ class JSON2SQL{
 
 		// return self
 		return $this;
+	}
+
+	// 
+	// @function get all record from table
+	// 
+	public function findAll()
+	{
+		$sql = "SELECT * FROM %s";
+		$cmd = sprintf($sql, $this->tableName);
+
+		$result = $this->dbHandler->query($cmd);
+
+		$this->_D($cmd);
+
+		// Store result
+		while($res = $result->fetchArray(SQLITE3_ASSOC))
+		{
+			array_push($this->result, $res);
+		}
+
+		return $this;
+	}
+
+	public function getAll()
+	{
+		return $this->findAll();
 	}
 
 	// 
@@ -170,6 +199,16 @@ class JSON2SQL{
 		}
 
 		return $this;
+	}
+
+	public function select($where)
+	{
+		return $this->find($where);
+	}
+
+	public function get($where)
+	{
+		return $this->find($where);
 	}
 
 	//
