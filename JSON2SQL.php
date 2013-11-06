@@ -90,7 +90,7 @@ class JSON2SQL{
 	// @function Drop table
 	// @param $tableName(String) Drop table name
 	// 
-	public function dropTable($tableName)
+	public function dropTable($tableName = null)
 	{
 		$_tableName = empty($tableName) ? $this->tableName : $tableName;
 		$sql = "DROP TABLE IF EXISTS $_tableName";
