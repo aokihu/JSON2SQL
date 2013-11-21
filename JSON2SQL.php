@@ -66,7 +66,7 @@ class JSON2SQL{
 	// 
 	public function toJSONArray()
 	{
-
+		return json_encode($this->result);
 	}
 
 	// 
@@ -74,7 +74,7 @@ class JSON2SQL{
 	// 
 	public function toJSONObject()
 	{
-
+		return json_encode($this->result, JSON_FORCE_OBJECT);
 	}
 
 	// 
@@ -192,6 +192,11 @@ class JSON2SQL{
 		// debug
 		$this->_D($cmd);
 
+		// if can not find anything
+		// return self dircetly
+		if($result == false)
+			return $this;
+
 		// Store result
 		while($res = $result->fetchArray(SQLITE3_ASSOC))
 		{
@@ -259,6 +264,7 @@ class JSON2SQL{
 
 			foreach ($items as $key => $value) {
 
+				// $this->_D($value);
 				// execute self add function
 				$this->add(json_encode($value));
 			}
@@ -274,6 +280,10 @@ class JSON2SQL{
 	{
 		$sql = "UPDATE %s SET %s WHERE ID = %s";
 		
+		// No result return false
+		if(count($this->result))
+			return false;
+
 		// fetch update data ID from self result set
 		foreach ($this->result as $item) {
 			$ID = $item['ID'];
@@ -306,6 +316,10 @@ class JSON2SQL{
 	public function delete()
 	{
 		$sql = "DELETE FROM %s WHERE ID = %s";
+
+		// return false if no result
+		if(count($this->result))
+			return false;
 
 		// fetch delete data ID from self result set
 		foreach ($this->result as $item) {
